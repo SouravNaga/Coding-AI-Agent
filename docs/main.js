@@ -33,11 +33,27 @@ async function sendMessage(message) {
   document.getElementById('send').disabled = true;
 
   try {
-    const res = await fetch('/api/chat', {
+    const serverBase = (window.SERVER_URL || '').replace(/\/$/, '');
+    const apiUrl = serverBase ? `${serverBase}/api/chat` : '/api/chat';
+
+    const res = await fetch(apiUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ history, message })
     });
+
+    // If the server returns JSON, parse it; otherwise show friendly message
+    const ctype = res.headers.get('content-type') || '';
+    if (!ctype.includes('application/json')) {
+      // probably an HTML page (404 or static site), show helpful message
+      history.push({ role: 'assistant', content: '' });
+      render();
+      await typewriterAnimate(`Server error: expected JSON but received HTML. This usually means the backend server is not deployed or the URL is incorrect (tried ${apiUrl}). Run the local server (npm run web) or deploy it and set SERVER_URL in the page.`, (partial) => {
+        history[history.length - 1].content = partial;
+        render();
+      }, 14);
+      return;
+    }
 
     const data = await res.json();
     if (res.ok) {

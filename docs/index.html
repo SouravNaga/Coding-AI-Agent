@@ -25,6 +25,13 @@
     </a></footer>
   </main>
 
+  <meta name="server-url" content="">
+  <script>
+    // Optional: set window.SERVER_URL from a meta tag so the UI can target a deployed backend
+    (function(){
+      try { window.SERVER_URL = document.querySelector('meta[name="server-url"]').content || ''; } catch(e) { window.SERVER_URL = ''; }
+    })();
+  </script>
   <script type="module" src="main.js"></script>
 </body>
 </html>

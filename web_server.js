@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
+import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import Groq from 'groq-sdk';
@@ -14,6 +15,13 @@ const groq = new Groq({ apiKey: API_KEY });
 
 const app = express();
 app.use(express.json());
+
+// Configure CORS: allow a specific origin from env or allow all origins in development
+const corsOrigin = process.env.CORS_ORIGIN || '*';
+app.use(cors({ origin: corsOrigin }));
+
+// Health endpoint for simple availability checks
+app.get('/ping', (req, res) => res.json({ ok: true, env: process.env.NODE_ENV || 'development' }));
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: coding-ai-agent-backend
+    env: node
+    branch: main
+    plan: free
+    buildCommand: "npm install"
+    startCommand: "node web_server.js"
+    autoDeploy: true
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: CORS_ORIGIN
+        value: "https://souravnaga.github.io"
+        sync: false
